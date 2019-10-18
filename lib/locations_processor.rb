@@ -8,12 +8,25 @@ module LocationsProcessor
   def run
     downloader_params = downloader_attributes
                         .merge(filename_attributes, sftp_attributes)
+    archiver_params = archiver_attributes
+                      .merge(filename_attributes, sftp_attributes)
+
     generator = Locations::Downloader.new(downloader_params)
+    archiver = Locations::Archiver.new(archiver_params)
+
     generator.create_db
+    archiver.move_file
   end
 
   def downloader_attributes
     {
+      pick_up_path: ENV.fetch('PICK_UP_PATH')
+    }
+  end
+
+  def archiver_attributes
+    {
+      archive_path: ENV.fetch('ARCHIVE_PATH'),
       pick_up_path: ENV.fetch('PICK_UP_PATH')
     }
   end
